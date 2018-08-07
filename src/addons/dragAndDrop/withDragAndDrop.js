@@ -1,19 +1,11 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { DragDropContext } from 'react-dnd'
 import cn from 'classnames'
 
 import { accessor } from '../../utils/propTypes'
-import DraggableEventWrapper from './DraggableEventWrapper'
-import { DroppableDayWrapper, DroppableDateCellWrapper } from './DropWrappers'
-
-let html5Backend
-
-try {
-  html5Backend = require('react-dnd-html5-backend')
-} catch (err) {
-  /* optional dep missing */
-}
+import EventWrapper from './EventWrapper'
+import EventContainerWrapper from './EventContainerWrapper'
+import WeekWrapper from './WeekWrapper'
 
 /**
  * Creates a higher-order component (HOC) supporting drag & drop and optionally resizing
@@ -52,16 +44,10 @@ try {
  * If you care about these corner cases, you can examine the `allDay` param suppled
  * in the callback to determine how the user dropped or resized the event.
  *
- * Note: you cannot use custom `EventWrapper`, `DayWrapper` or `DateCellWrapper`
- * components when using this HOC as they are overwritten here.
- *
  * @param {*} Calendar
  * @param {*} backend
  */
-export default function withDragAndDrop(
-  Calendar,
-  { backend = html5Backend } = {}
-) {
+export default function withDragAndDrop(Calendar) {
   class DragAndDropCalendar extends React.Component {
     static propTypes = {
       onEventDrop: PropTypes.func,
@@ -70,6 +56,7 @@ export default function withDragAndDrop(
       endAccessor: accessor,
       allDayAccessor: accessor,
       draggableAccessor: accessor,
+      resizableAccessor: accessor,
       selectable: PropTypes.oneOf([true, false, 'ignoreEvents']),
       resizable: PropTypes.bool,
       components: PropTypes.object,
@@ -78,10 +65,12 @@ export default function withDragAndDrop(
 
     static defaultProps = {
       // TODO: pick these up from Calendar.defaultProps
+      components: {},
       startAccessor: 'start',
       endAccessor: 'end',
       allDayAccessor: 'allDay',
       draggableAccessor: null,
+      resizableAccessor: null,
       step: 30,
     }
 
@@ -92,9 +81,13 @@ export default function withDragAndDrop(
     static childContextTypes = {
       onEventDrop: PropTypes.func,
       onEventResize: PropTypes.func,
-      startAccessor: accessor,
-      endAccessor: accessor,
+      onMove: PropTypes.func,
+      onResize: PropTypes.func,
+      dragAndDropAction: PropTypes.object,
+
+      components: PropTypes.object,
       draggableAccessor: accessor,
+      resizableAccessor: accessor,
       step: PropTypes.number,
     }
 
@@ -102,42 +95,35 @@ export default function withDragAndDrop(
       return {
         onEventDrop: this.props.onEventDrop,
         onEventResize: this.props.onEventResize,
-        startAccessor: this.props.startAccessor,
-        endAccessor: this.props.endAccessor,
         step: this.props.step,
+        components: this.props.components,
         draggableAccessor: this.props.draggableAccessor,
+        resizableAccessor: this.props.resizableAccessor,
+
+        onResize: (event, direction) =>
+          this.setState({
+            dragAndDropAction: event
+              ? { action: 'resize', event, direction }
+              : {},
+          }),
+
+        onMove: event =>
+          this.setState({
+            dragAndDropAction: event ? { action: 'move', event } : {},
+          }),
+
+        dragAndDropAction: this.state.dragAndDropAction,
       }
     }
 
     constructor(...args) {
       super(...args)
-      this.state = { isDragging: false }
-    }
-
-    componentWillMount() {
-      let monitor = this.context.dragDropManager.getMonitor()
-      this.monitor = monitor
-      this.unsubscribeToStateChange = monitor.subscribeToStateChange(
-        this.handleStateChange
-      )
-    }
-
-    componentWillUnmount() {
-      this.monitor = null
-      this.unsubscribeToStateChange()
-    }
-
-    handleStateChange = () => {
-      const isDragging = !!this.monitor.getItem()
-
-      if (isDragging !== this.state.isDragging) {
-        setTimeout(() => this.setState({ isDragging }))
-      }
+      this.state = { isDragging: false, dragAndDropAction: {} }
     }
 
     render() {
       const { selectable, components, ...props } = this.props
-
+      const { dragAndDropAction } = this.state
       delete props.onEventDrop
       delete props.onEventResize
 
@@ -146,23 +132,19 @@ export default function withDragAndDrop(
       props.className = cn(
         props.className,
         'rbc-addons-dnd',
-        this.state.isDragging && 'rbc-addons-dnd-is-dragging'
+        dragAndDropAction.action && 'rbc-addons-dnd-is-dragging'
       )
 
       props.components = {
         ...components,
-        dateCellWrapper: DroppableDateCellWrapper,
-        dayWrapper: DroppableDayWrapper,
-        eventWrapper: DraggableEventWrapper,
+        eventWrapper: EventWrapper,
+        eventContainerWrapper: EventContainerWrapper,
+        weekWrapper: WeekWrapper,
       }
 
       return <Calendar {...props} />
     }
   }
 
-  if (backend === false) {
-    return DragAndDropCalendar
-  } else {
-    return DragDropContext(backend)(DragAndDropCalendar)
-  }
+  return DragAndDropCalendar
 }

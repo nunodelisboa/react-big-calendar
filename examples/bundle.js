@@ -1578,7 +1578,7 @@
       }
 
       function segStyle(span, slots) {
-        var per = span / slots * 100 + '%'
+        var per = (span / slots) * 100 + '%'
         return {
           WebkitFlexBasis: per,
           flexBasis: per,
@@ -2960,8 +2960,12 @@ object-assign
                 // Multicharacter am/pm indicator
                 part =
                   value.getHours() < 12
-                    ? cal.AM ? cal.AM[0] : ' '
-                    : cal.PM ? cal.PM[0] : ' '
+                    ? cal.AM
+                      ? cal.AM[0]
+                      : ' '
+                    : cal.PM
+                      ? cal.PM[0]
+                      : ' '
                 ret.push(clength === 1 ? part.charAt(0) : part)
                 break
               case 'f':
@@ -3225,10 +3229,10 @@ object-assign
                 twoDigitYearMax = cal.twoDigitYearMax
               twoDigitYearMax =
                 typeof twoDigitYearMax === 'string'
-                  ? new Date().getFullYear() % 100 +
+                  ? (new Date().getFullYear() % 100) +
                     parseInt(twoDigitYearMax, 10)
                   : twoDigitYearMax
-              year += curr - curr % 100
+              year += curr - (curr % 100)
               if (year > twoDigitYearMax) {
                 year -= 100
               }
@@ -4033,7 +4037,9 @@ object-assign
       module.exports = function getWindow(node) {
         return node === node.window
           ? node
-          : node.nodeType === 9 ? node.defaultView || node.parentWindow : false
+          : node.nodeType === 9
+            ? node.defaultView || node.parentWindow
+            : false
       }
 
       /***/
@@ -4045,7 +4051,7 @@ object-assign
       exports.__esModule = true
       exports.isSelected = isSelected
       exports.slotWidth = slotWidth
-      exports.getCellAtX = getCellAtX
+      exports.getSlotAtX = getSlotAtX
       exports.pointInBox = pointInBox
       exports.dateCellSelection = dateCellSelection
       function isSelected(event, selected) {
@@ -4060,7 +4066,7 @@ object-assign
         return cellWidth
       }
 
-      function getCellAtX(rowBox, x, cellWidth, rtl, slots) {
+      function getSlotAtX(rowBox, x, cellWidth, rtl, slots) {
         return rtl
           ? slots - 1 - Math.floor((x - rowBox.left) / cellWidth)
           : Math.floor((x - rowBox.left) / cellWidth)
@@ -4083,7 +4089,7 @@ object-assign
         var cellWidth = slotWidth(rowBox, slots)
 
         // cell under the mouse
-        var currentSlot = getCellAtX(rowBox, box.x, cellWidth, rtl, slots)
+        var currentSlot = getSlotAtX(rowBox, box.x, cellWidth, rtl, slots)
 
         // Identify row as either the initial row
         // or the row under the current mouse point
@@ -7346,7 +7352,9 @@ object-assign
       function getWindow(node) {
         return node === node.window
           ? node
-          : node.nodeType === 9 ? node.defaultView || node.parentWindow : false
+          : node.nodeType === 9
+            ? node.defaultView || node.parentWindow
+            : false
       }
       module.exports = exports['default']
 
@@ -10293,7 +10301,8 @@ object-assign
         return obj && obj.__esModule ? obj : { default: obj }
       }
 
-      var msPattern = /^-ms-/ /**
+      var msPattern = /^-ms-/
+      /**
        * Copyright 2014-2015, Facebook, Inc.
        * All rights reserved.
        * https://github.com/facebook/react/blob/2aeb8a2a6beb00617a4217f7f8284924fa2ad819/src/vendor/core/camelizeStyleName.js
@@ -10790,7 +10799,9 @@ object-assign
         var win = getWindow(node)
         return win
           ? win.innerHeight
-          : client ? node.clientHeight : offset(node).height
+          : client
+            ? node.clientHeight
+            : offset(node).height
       }
 
       /***/
@@ -11776,7 +11787,9 @@ object-assign
         var win = getWindow(node)
         return win
           ? win.innerWidth
-          : client ? node.clientWidth : offset(node).width
+          : client
+            ? node.clientWidth
+            : offset(node).width
       }
 
       /***/
@@ -15602,7 +15615,9 @@ object-assign
                     ':' +
                     source.lineNumber +
                     ')'
-                  : ownerName ? ' (created by ' + ownerName + ')' : '')
+                  : ownerName
+                    ? ' (created by ' + ownerName + ')'
+                    : '')
               )
             }
 
@@ -20927,7 +20942,9 @@ object-assign
           a.hasOwnProperty(e) &&
             ((b = a[e])
               ? (this[e] = b(c))
-              : 'target' === e ? (this.target = d) : (this[e] = c[e]))
+              : 'target' === e
+                ? (this.target = d)
+                : (this[e] = c[e]))
         this.isDefaultPrevented = (null != c.defaultPrevented
         ? c.defaultPrevented
         : !1 === c.returnValue)
@@ -21421,7 +21438,9 @@ object-assign
         var b = this.nativeEvent
         return b.getModifierState
           ? b.getModifierState(a)
-          : (a = cd[a]) ? !!b[a] : !1
+          : (a = cd[a])
+            ? !!b[a]
+            : !1
       }
       function ed() {
         return dd
@@ -21500,7 +21519,9 @@ object-assign
         a = a.type
         return 'string' === typeof a
           ? a
-          : 'function' === typeof a ? a.displayName || a.name : null
+          : 'function' === typeof a
+            ? a.displayName || a.name
+            : null
       }
       function kd(a) {
         var b = a
@@ -21883,7 +21904,9 @@ object-assign
           var e =
               d.window === d
                 ? d.document
-                : 9 === d.nodeType ? d : d.ownerDocument,
+                : 9 === d.nodeType
+                  ? d
+                  : d.ownerDocument,
             f
           if (!(f = !e)) {
             a: {
@@ -22036,7 +22059,9 @@ object-assign
         which: function(a) {
           return 'keypress' === a.type
             ? Wd(a)
-            : 'keydown' === a.type || 'keyup' === a.type ? a.keyCode : 0
+            : 'keydown' === a.type || 'keyup' === a.type
+              ? a.keyCode
+              : 0
         },
       })
       function $d(a, b, c, d) {
@@ -22071,14 +22096,18 @@ object-assign
         deltaX: function(a) {
           return 'deltaX' in a
             ? a.deltaX
-            : 'wheelDeltaX' in a ? -a.wheelDeltaX : 0
+            : 'wheelDeltaX' in a
+              ? -a.wheelDeltaX
+              : 0
         },
         deltaY: function(a) {
           return 'deltaY' in a
             ? a.deltaY
             : 'wheelDeltaY' in a
               ? -a.wheelDeltaY
-              : 'wheelDelta' in a ? -a.wheelDelta : 0
+              : 'wheelDelta' in a
+                ? -a.wheelDelta
+                : 0
         },
         deltaZ: null,
         deltaMode: null,
@@ -23368,7 +23397,9 @@ object-assign
             (w = function(a, b, c, e) {
               c !== e && d(b)
             }))
-          : q ? E('235') : E('236')
+          : q
+            ? E('235')
+            : E('236')
         return {
           completeWork: function(a, b, c) {
             var m = b.pendingProps
@@ -23641,8 +23672,12 @@ object-assign
             for (var e = a; ; ) {
               if (5 === e.tag || 6 === e.tag)
                 c
-                  ? d ? L(b, e.stateNode, c) : I(b, e.stateNode, c)
-                  : d ? G(b, e.stateNode) : z(b, e.stateNode)
+                  ? d
+                    ? L(b, e.stateNode, c)
+                    : I(b, e.stateNode, c)
+                  : d
+                    ? G(b, e.stateNode)
+                    : z(b, e.stateNode)
               else if (4 !== e.tag && null !== e.child) {
                 e.child['return'] = e
                 e = e.child
@@ -23964,16 +23999,18 @@ object-assign
                 k & 36 && Dg(t.alternate, t)
                 k & 128 && Eg(t)
                 if (k & 64)
-                  switch (((e = t),
-                  (f = void 0),
-                  null !== R &&
-                    ((f = R.get(e)),
-                    R['delete'](e),
-                    null == f &&
-                      null !== e.alternate &&
-                      ((e = e.alternate), (f = R.get(e)), R['delete'](e))),
-                  null == f ? E('184') : void 0,
-                  e.tag)) {
+                  switch (
+                    ((e = t),
+                    (f = void 0),
+                    null !== R &&
+                      ((f = R.get(e)),
+                      R['delete'](e),
+                      null == f &&
+                        null !== e.alternate &&
+                        ((e = e.alternate), (f = R.get(e)), R['delete'](e))),
+                    null == f ? E('184') : void 0,
+                    e.tag)
+                  ) {
                     case 2:
                       e.stateNode.componentDidCatch(f.error, {
                         componentStack: f.componentStack,
@@ -24183,7 +24220,9 @@ object-assign
                         ':' +
                         k.lineNumber +
                         ')'
-                      : n ? ' (created by ' + n + ')' : '')
+                      : n
+                        ? ' (created by ' + n + ')'
+                        : '')
                   break a
                 default:
                   m = ''
@@ -24234,7 +24273,13 @@ object-assign
         function y(a) {
           return 0 !== ka
             ? ka
-            : ja ? (Qb ? 1 : H) : !Hg || a.internalContextTag & 1 ? v() : 1
+            : ja
+              ? Qb
+                ? 1
+                : H
+              : !Hg || a.internalContextTag & 1
+                ? v()
+                : 1
         }
         function u(a, b) {
           return z(a, b, !1)
@@ -24267,7 +24312,9 @@ object-assign
                 Fa ||
                   (la
                     ? Sb && ((ma = d), (na = 1), m(ma, na))
-                    : 1 === e ? w(1, null) : L(e))
+                    : 1 === e
+                      ? w(1, null)
+                      : L(e))
                 !ja && c === ra && b < H && ((F = ra = null), (H = 0))
               } else break
             a = a['return']
@@ -25203,7 +25250,9 @@ object-assign
                     'autoFocus' !== h &&
                     (Ra.hasOwnProperty(h)
                       ? null != k && lg(d, h)
-                      : e ? Kf(a, h, k) : null != k && If(a, h, k))
+                      : e
+                        ? Kf(a, h, k)
+                        : null != k && If(a, h, k))
           }
         switch (b) {
           case 'input':
@@ -25321,8 +25370,12 @@ object-assign
               : 'children' === g
                 ? cg(a, h)
                 : d
-                  ? null != h ? Kf(a, g, h) : a.removeAttribute(g)
-                  : null != h ? If(a, g, h) : Jf(a, g)
+                  ? null != h
+                    ? Kf(a, g, h)
+                    : a.removeAttribute(g)
+                  : null != h
+                    ? If(a, g, h)
+                    : Jf(a, g)
         }
         switch (c) {
           case 'input':
@@ -26987,12 +27040,16 @@ object-assign
                 var listenersIsArr = Array.isArray(dispatchListeners)
                 var listenersLen = listenersIsArr
                   ? dispatchListeners.length
-                  : dispatchListeners ? 1 : 0
+                  : dispatchListeners
+                    ? 1
+                    : 0
 
                 var instancesIsArr = Array.isArray(dispatchInstances)
                 var instancesLen = instancesIsArr
                   ? dispatchInstances.length
-                  : dispatchInstances ? 1 : 0
+                  : dispatchInstances
+                    ? 1
+                    : 0
 
                 warning(
                   instancesIsArr === listenersIsArr &&
@@ -31502,14 +31559,18 @@ object-assign
               deltaX: function(event) {
                 return 'deltaX' in event
                   ? event.deltaX // Fallback to `wheelDeltaX` for Webkit and normalize (right is positive).
-                  : 'wheelDeltaX' in event ? -event.wheelDeltaX : 0
+                  : 'wheelDeltaX' in event
+                    ? -event.wheelDeltaX
+                    : 0
               },
               deltaY: function(event) {
                 return 'deltaY' in event
                   ? event.deltaY // Fallback to `wheelDeltaY` for Webkit and normalize (down is positive).
                   : 'wheelDeltaY' in event
                     ? -event.wheelDeltaY // Fallback to `wheelDelta` for IE<9 and normalize (down is positive).
-                    : 'wheelDelta' in event ? -event.wheelDelta : 0
+                    : 'wheelDelta' in event
+                      ? -event.wheelDelta
+                      : 0
               },
               deltaZ: null,
 
@@ -31906,7 +31967,9 @@ object-assign
                     ':' +
                     source.lineNumber +
                     ')'
-                  : ownerName ? ' (created by ' + ownerName + ')' : '')
+                  : ownerName
+                    ? ' (created by ' + ownerName + ')'
+                    : '')
               )
             }
 
@@ -48654,7 +48717,9 @@ object-assign
         function getLinkName(name) {
           return name === 'value'
             ? 'valueLink'
-            : name === 'checked' ? 'checkedLink' : null
+            : name === 'checked'
+              ? 'checkedLink'
+              : null
         }
 
         function defaultKey(key) {
@@ -49489,7 +49554,9 @@ object-assign
         var isBinary = reIsBinary.test(value)
         return isBinary || reIsOctal.test(value)
           ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
-          : reIsBadHex.test(value) ? NAN : +value
+          : reIsBadHex.test(value)
+            ? NAN
+            : +value
       }
 
       module.exports = toNumber
@@ -51072,7 +51139,7 @@ object-assign
           )
 
           positionTop += topDelta
-          arrowOffsetTop = 50 * (1 - 2 * topDelta / overlayHeight) + '%'
+          arrowOffsetTop = 50 * (1 - (2 * topDelta) / overlayHeight) + '%'
           arrowOffsetLeft = void 0
         } else if (placement === 'top' || placement === 'bottom') {
           positionLeft =
@@ -51092,7 +51159,7 @@ object-assign
           )
 
           positionLeft += leftDelta
-          arrowOffsetLeft = 50 * (1 - 2 * leftDelta / overlayWidth) + '%'
+          arrowOffsetLeft = 50 * (1 - (2 * leftDelta) / overlayWidth) + '%'
           arrowOffsetTop = void 0
         } else {
           throw new Error(
@@ -51285,7 +51352,8 @@ object-assign
         return obj && obj.__esModule ? obj : { default: obj }
       }
 
-      var msPattern = /^ms-/ /**
+      var msPattern = /^ms-/
+      /**
        * Copyright 2013-2014, Facebook, Inc.
        * All rights reserved.
        * https://github.com/facebook/react/blob/2aeb8a2a6beb00617a4217f7f8284924fa2ad819/src/vendor/core/hyphenateStyleName.js
@@ -52224,7 +52292,7 @@ object-assign
                   (0, _Selection.getBoundsForNode)(node),
                   range.length
                 )
-                var currentCell = (0, _selection.getCellAtX)(
+                var currentCell = (0, _selection.getSlotAtX)(
                   rowBox,
                   point.x,
                   width,
@@ -53670,8 +53738,8 @@ object-assign
         }
 
         this._slotStyle = function(startSlot, endSlot) {
-          var top = startSlot / _this2._totalMin * 100
-          var bottom = endSlot / _this2._totalMin * 100
+          var top = (startSlot / _this2._totalMin) * 100
+          var bottom = (endSlot / _this2._totalMin) * 100
 
           return {
             top: top + '%',
@@ -54174,8 +54242,8 @@ object-assign
           getSlot(multiDayEvent || event, endAccessor, min, totalMin),
           start + step
         )
-        var top = start / totalMin * 100
-        var bottom = end / totalMin * 100
+        var top = (start / totalMin) * 100
+        var bottom = (end / totalMin) * 100
 
         var height = bottom - top
 
@@ -55661,8 +55729,12 @@ object-assign
         stack.set(value, result)
 
         var keysFunc = isFull
-          ? isFlat ? getAllKeysIn : getAllKeys
-          : isFlat ? keysIn : keys
+          ? isFlat
+            ? getAllKeysIn
+            : getAllKeys
+          : isFlat
+            ? keysIn
+            : keys
 
         var props = isArr ? undefined : keysFunc(value)
         arrayEach(props || value, function(subValue, key) {
@@ -57773,7 +57845,8 @@ object-assign
                   var hday,
                     hmonth,
                     hyear =
-                      Math.floor((daysSinceJan0101 - 227013) * 30 / 10631) + 1,
+                      Math.floor(((daysSinceJan0101 - 227013) * 30) / 10631) +
+                      1,
                     absDays = this.daysToYear(hyear),
                     daysInYear = this.isLeapYear(hyear) ? 355 : 354
                   // hyear is just approximate, it may need adjustment up or down by 1.
@@ -57807,7 +57880,7 @@ object-assign
                   // calculates how many days since Jan 1, 0001
                   var yearsToYear30 = Math.floor((year - 1) / 30) * 30,
                     yearsInto30 = year - yearsToYear30 - 1,
-                    days = Math.floor(yearsToYear30 * 10631 / 30) + 227013
+                    days = Math.floor((yearsToYear30 * 10631) / 30) + 227013
                   while (yearsInto30 > 0) {
                     days += this.isLeapYear(yearsInto30) ? 355 : 354
                     yearsInto30--
@@ -59831,7 +59904,7 @@ object-assign
               // Dock to the top
               offsetFromDragPreview.y,
               // Align at the center
-              offsetFromDragPreview.y / sourceHeight * dragPreviewHeight,
+              (offsetFromDragPreview.y / sourceHeight) * dragPreviewHeight,
               // Dock to the bottom
               offsetFromDragPreview.y + dragPreviewHeight - sourceHeight,
             ]
@@ -59854,7 +59927,7 @@ object-assign
               // Dock to the left
               offsetFromDragPreview.x,
               // Align at the center
-              offsetFromDragPreview.x / sourceWidth * dragPreviewWidth,
+              (offsetFromDragPreview.x / sourceWidth) * dragPreviewWidth,
               // Dock to the right
               offsetFromDragPreview.x + dragPreviewWidth - sourceWidth,
             ]
@@ -59952,7 +60025,7 @@ object-assign
               var dxNext = dxs[_i2 + 1]
               var common = dx + dxNext
               c1s.push(
-                3 * common / ((common + dxNext) / _m + (common + dx) / mNext)
+                (3 * common) / ((common + dxNext) / _m + (common + dx) / mNext)
               )
             }
           }
